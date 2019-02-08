@@ -3,6 +3,7 @@ import boto3
 import urllib
 import re
 import uuid
+import os 
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
@@ -17,8 +18,8 @@ def lambda_handler(event, context):
        points = str(params['text'][0].count("+") - 1)
        negative_points =  params['text'][0].count("-") + 1
        name = str(re.findall(r'\@\w+', str(params['text'][0]))[0])
-
-       response = dynamodb.get_item(TableName='push', Key={'name':{'S':name}})
+       table =  os.environ['TABLE_NAME']
+       response = dynamodb.get_item(TableName=table, Key={'name':{'S':name}})
 
        try:
          item = response['Item']
@@ -36,7 +37,7 @@ def lambda_handler(event, context):
 
        new_points = total_points + int(points)
 
-       dynamodb.put_item(TableName='push', Item={'push_id':{'S':id}, 'name':{'S':name}, 'karma':{'S':str(new_points)}})
+       dynamodb.put_item(TableName=table, Item={'push_id':{'S':id}, 'name':{'S':name}, 'karma':{'S':str(new_points)}})
 
        return {
             'statusCode': 200,
