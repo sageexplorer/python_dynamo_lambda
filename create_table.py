@@ -4,9 +4,9 @@ import boto3
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
-
+table_name = "
 table = dynamodb.create_table(
-    TableName='push',
+    TableName = table_name,
     KeySchema=[
         {
             'AttributeName': 'push_id',
